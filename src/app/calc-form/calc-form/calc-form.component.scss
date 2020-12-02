@@ -1,0 +1,40 @@
+@import '~@angular/material/theming';
+
+$grid_gutter: .5rem;
+
+:host {
+    display: block;
+    max-width: 50rem;
+    margin: {
+        left: auto;
+        right: auto;
+    };
+}
+
+.calc-form {
+    padding: 2rem 0;
+    position: relative;
+
+    .calc-form__card {
+        margin-bottom: 1rem;
+    }
+
+    .calc-form__row {
+        display: block;
+        margin: .8rem 0;
+    }
+
+    .calc-form__footer__msg {
+        display: inline-block;
+        font-size: 90%;
+        margin-left: 2rem;
+        mat-icon {
+            vertical-align: middle;
+        }
+    }
+}
+
+.mat-error {
+    font-size: 75%;
+    margin-top: .25rem;
+}
