@@ -1,0 +1,52 @@
+:host {
+    display: block;
+    min-height: 100%;
+    width: 100%;
+    
+    background-color: hsla(200,40%,30%,.4);
+    background-image:		
+    url('/assets/images/tumblr_p7n8kqHMuD1uy4lhuo1_540.png'), 
+    url('/assets/images/tumblr_p7n908E1Jb1uy4lhuo1_1280.png'),
+    url('/assets/images/tumblr_p7n8kqHMuD1uy4lhuo2_1280.png'),
+    url('/assets/images/tumblr_p7n8on19cV1uy4lhuo1_1280.png'),
+    url('/assets/images/tumblr_p7n8kqHMuD1uy4lhuo3_1280.png');
+    background-repeat: repeat-x;
+    background-position: 0 20%, 0 100%, 0 50%, 0 100%, 0 0;
+    background-size: 2500px, 800px, 500px 200px, 1000px, 400px 260px;
+    animation: 200s parallax infinite linear;
+    will-change: background-position;
+
+    @keyframes parallax {
+        100% {
+            background-position: 
+            -5000px 20%,
+            -800px 95%,
+            500px 50%,
+            1000px 100%,
+            400px 0;
+        }
+    }
+
+
+
+    
+    // background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    // background-size: 500%;
+    // animation: gradient 20s ease infinite;
+    
+    // @keyframes gradient {
+    //     0% {
+    //         background-position: 0% 50%;
+    //     }
+    //     50% {
+    //         background-position: 100% 50%;
+    //     }
+    //     100% {
+    //         background-position: 0% 50%;
+    //     }
+    // }
+}
+
+
+
+

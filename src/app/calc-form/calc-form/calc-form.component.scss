@@ -1,0 +1,77 @@
+@import '~@angular/material/theming';
+
+$grid_gutter: 1rem;
+
+:host {
+    display: block;
+    max-width: calc(50rem + #{2 * $grid_gutter});
+    margin: {
+        left: auto;
+        right: auto;
+    };
+    padding: {
+        left: $grid_gutter;
+        right: $grid_gutter;
+    };
+
+}
+
+.calc-form {
+    padding: 2rem 0;
+    position: relative;
+
+    .calc-form__card {
+        margin-bottom: 1rem;
+    }
+
+    .calc-form__row {
+        display: block;
+        margin: .8rem 0;
+
+        &--nested {
+            display: flex;
+            flex-flow: row wrap;
+            margin: {
+                left: -$grid_gutter;
+                right: -$grid_gutter;
+            }
+        }
+    }
+    .calc-form__column-2 {
+        flex: 0 0 100%;
+        padding: 0 $grid_gutter;
+        margin-bottom: 1rem;
+
+        @media screen and (min-width: 36.5rem) {
+            flex: 0 0 50%;
+            max-width: 50%;
+            margin-bottom: 0;
+        }
+    }
+
+    .calc-form__footer__msg {
+        display: inline-block;
+        font-size: 90%;
+        margin-left: 2rem;
+        mat-icon {
+            vertical-align: middle;
+        }
+    }
+
+    .calc-form__summary {
+        display: flex;
+        justify-content: flex-end;
+
+        mat-card-title {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.mat-error {
+    font-size: 75%;
+    margin-top: .25rem;
+}
+mat-icon {
+    vertical-align: middle;
+}
