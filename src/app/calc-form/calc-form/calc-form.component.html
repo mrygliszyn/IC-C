@@ -9,12 +9,45 @@
             </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-            <div class="calc-form__row">
-                <input type="hidden" formControlName="pricingData">
-                <input type="file" accept=".csv" (change)="onPricingDataChange($event)">
-                <mat-spinner diameter="20" *ngIf="pricingUploadPendingFlag"></mat-spinner>
-                <div class="mat-error" *ngIf="formPricing.errors?.required">You must import valid
-                    pricing data source</div>
+            <div class="calc-form__row calc-form__row--nested">
+                <div class="calc-form__column-2" *ngIf="!usePricingDataFromStorageFlag">
+                    <h5>Load pricing data from file</h5>
+                    <div>
+                        <input type="hidden" formControlName="pricingDataRaw">
+                        <input type="file" accept=".csv" (change)="onPricingDataChange($event)">
+                        <mat-spinner diameter="20" *ngIf="pricingUploadPendingFlag"></mat-spinner>
+                        <mat-checkbox formControlName="pricingDataSaveFlag">
+                            Save file?
+                        </mat-checkbox>
+                    </div>
+                    <div class="mat-error" *ngIf="formPricing.errors?.required">You must import valid
+                        pricing data source</div>
+                </div>
+                <div class="calc-form__column-2" *ngIf="pricingDataFromStorage">
+                    <ng-container *ngIf="!usePricingDataFromStorageFlag">
+                        <h5>
+                            <mat-icon color="accent">info</mat-icon>
+                            Use saved pricing data
+                        </h5>
+                        <button type="button" mat-button color="primary" (click)="usePricingDataFromStorage()">
+                            <mat-icon>check</mat-icon>
+                            Use
+                        </button>
+                    </ng-container>
+                    <ng-container *ngIf="usePricingDataFromStorageFlag">
+                        <h4>
+                            Using saved pricing data
+                        </h4>
+                        <button type="button" mat-button color="primary" (click)="usePricingDataFromFile()">
+                            <mat-icon>cloud_upload</mat-icon>
+                            Upload new pricing data
+                        </button>
+                    </ng-container>
+                    <button type="button" mat-button color="accent" (click)="removePricingSavedData()">
+                        <mat-icon>delete_outline</mat-icon>
+                        Delete
+                    </button>
+                </div>
             </div>
             <mat-form-field class="calc-form__row">
                 <mat-label>
@@ -50,7 +83,7 @@
             </span>
         </mat-card-actions>
     </mat-card>
-    <mat-card class="calc-form__card calc-form__summary" *ngIf="formSubmittedFlag && form.valid && !form.dirty">
+    <mat-card class="calc-form__card calc-form__summary">
         <mat-card-header>
             <mat-card-title>
                 Total shipping cost: {{ grandTotal | currency:'EUR' }}

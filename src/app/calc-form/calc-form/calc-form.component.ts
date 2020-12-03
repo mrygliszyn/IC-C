@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
 
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 interface PriceTable {
     [key: string]: number
 }
@@ -27,20 +29,28 @@ export class CalcFormComponent implements OnInit {
 
     // Pricing upload
     public pricingUploadPendingFlag: boolean = false;
+    // Pricing data storage
+    private pricingDataStorageKey = 'IC_CALC_PRICES';
+    public pricingDataFromStorage: PriceTable | null = null;
+    public usePricingDataFromStorageFlag: boolean = false;
 
-    constructor() { }
+    constructor(
+        private _snackBar: MatSnackBar
+    ) { }
 
     ngOnInit() {
+        this.loadPricingDataFromStorage();
         this.initForm();
     }
 
     initForm(): void {
         this.form = new FormGroup({
-            pricingData: new FormControl('', {
+            pricingDataRaw: new FormControl('', {
                 validators: [
                     Validators.required
                 ],
             }),
+            pricingDataSaveFlag: new FormControl(false),
             postcode: new FormControl('', Validators.compose([
                 Validators.required,
                 Validators.minLength(5),
@@ -58,7 +68,7 @@ export class CalcFormComponent implements OnInit {
 
     // Form controls shorthand
     get formPricing(): AbstractControl {
-        return this.form.get('pricingData') as AbstractControl;
+        return this.form.get('pricingDataRaw') as AbstractControl;
     }
     get formPostcode(): AbstractControl {
         return this.form.get('postcode') as AbstractControl;
@@ -75,7 +85,25 @@ export class CalcFormComponent implements OnInit {
             this.formSubmittedFlag = true;
             this.form.markAsPristine();
 
-            const { pricingData, postcode, calculatedTotal, longProductFlag } = this.form.value;
+            const { pricingDataRaw, pricingDataSaveFlag, postcode, calculatedTotal, longProductFlag } = this.form.value;
+
+            let pricingData: PriceTable;
+
+            if (this.usePricingDataFromStorageFlag && this.pricingDataFromStorage) {
+                pricingData = this.pricingDataFromStorage;
+            } else if (!this.usePricingDataFromStorageFlag && pricingDataRaw) {
+                pricingData = <PriceTable>this.parsePricingFromString(pricingDataRaw);
+                if (pricingDataSaveFlag) {
+                    this.savePricingData(<PriceTable>pricingData);
+                }
+            } else {
+                // No suitable data source, reset form
+                this.usePricingDataFromStorageFlag = false;
+                this.pricingDataFromStorage = null;
+
+                this._snackBar.open('Error! No valid pricing data source found, upload valid data source')
+                return;
+            }
 
             // Base shipping cost
             const baseShippingCost = this.getShippingCostByLocation(postcode, pricingData);
@@ -96,19 +124,14 @@ export class CalcFormComponent implements OnInit {
      * Returns base shipment cost, based on delivery location post code
      * 
      * @param postcode Delivery location post code
-     * @param pricingDataRaw Base shipment cost price table
+     * @param priceTable Base shipment cost price table
      * 
      * @return Base shipment cost based on delivery location
      */
-    getShippingCostByLocation(postcode: string, pricingDataRaw?: string): number {
+    getShippingCostByLocation(postcode: string, priceTable: PriceTable): number {
         const zone = <string>postcode.slice(0, 2);
 
-        if (pricingDataRaw) {
-            let priceTable = <PriceTable>this.parsePricingFromString(pricingDataRaw);
-
-            return priceTable[zone];
-        }
-        return 0;
+        return priceTable[zone];
     }
 
     /**
@@ -187,5 +210,82 @@ export class CalcFormComponent implements OnInit {
             this.pricingUploadPendingFlag = false;
             this.form.enable();
         }
+    }
+
+    // Pricing data storage
+    /**
+     * Saves raw pricing data in localStorage
+     * 
+     * @param pricingData CSV raw content
+     */
+    savePricingData(pricingData: PriceTable): void {
+        this.pricingDataFromStorage = pricingData;
+
+        const priceDataJSON = JSON.stringify(pricingData);
+        localStorage.setItem(this.pricingDataStorageKey, priceDataJSON);
+    }
+
+    /**
+     * 
+     */
+    loadPricingDataFromStorage(): void {
+        const pricingDataJSON = localStorage.getItem(this.pricingDataStorageKey);
+
+        if (pricingDataJSON) {
+            try {
+                const pricingData = JSON.parse(pricingDataJSON);
+
+                this.pricingDataFromStorage = pricingData;
+            } catch ($e) { }
+        }
+    }
+
+    // UI
+    usePricingDataFromStorage(): void {
+        // if saved pricing data available
+        if (<PriceTable>this.pricingDataFromStorage) {
+            this.usePricingDataFromStorageFlag = true;
+            // hide file input and checkbox
+            this.removePricingUploadFormFields();
+        }
+        // If data corrupted or removed
+        else {
+            this.pricingDataFromStorage = null;
+            this.usePricingDataFromStorageFlag = false;
+            this.addPricingUploadFormFields();
+        }
+    }
+    removePricingSavedData(): void {
+        // Remove saved data
+        localStorage.removeItem(this.pricingDataStorageKey);
+        this.pricingDataFromStorage = null;
+        this.usePricingDataFromStorageFlag = false;
+        // Append file input to the form
+        this.addPricingUploadFormFields();
+    }
+    usePricingDataFromFile() {
+        this.usePricingDataFromStorageFlag = false;
+        this.addPricingUploadFormFields();
+    }
+
+    /**
+     * Appends file upload controls to form
+     */
+    addPricingUploadFormFields(): void {
+        this.form.addControl('pricingDataRaw', new FormControl('', {
+            validators: [
+                Validators.required
+            ],
+            updateOn: 'change',
+        }));
+        this.form.addControl('usePricingSavedDataFlag', new FormControl(false));
+    }
+
+    /**
+     * Removes file upload controls from form
+     */
+    removePricingUploadFormFields(): void {
+        this.form.removeControl('pricingDataRaw');
+        this.form.removeControl('usePricingSavedDataFlag');
     }
 }
