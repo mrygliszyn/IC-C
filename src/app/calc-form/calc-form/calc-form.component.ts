@@ -156,7 +156,7 @@ export class CalcFormComponent implements OnInit {
      * @returns Subtotal after discount
      */
     applyDiscount(subtotal: number): number {
-        if (subtotal > this.discountFromAmount) {
+        if (subtotal >= this.discountFromAmount) {
             return subtotal - (subtotal * +this.discountValue);
         }
         return subtotal;
