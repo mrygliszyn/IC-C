@@ -1,14 +1,19 @@
 @import '~@angular/material/theming';
 
-$grid_gutter: .5rem;
+$grid_gutter: 1rem;
 
 :host {
     display: block;
-    max-width: 50rem;
+    max-width: calc(50rem + #{2 * $grid_gutter});
     margin: {
         left: auto;
         right: auto;
     };
+    padding: {
+        left: $grid_gutter;
+        right: $grid_gutter;
+    };
+
 }
 
 .calc-form {
@@ -20,20 +25,28 @@ $grid_gutter: .5rem;
     }
 
     .calc-form__row {
+        display: block;
+        margin: .8rem 0;
+
         &--nested {
             display: flex;
+            flex-flow: row wrap;
             margin: {
                 left: -$grid_gutter;
                 right: -$grid_gutter;
             }
         }
-        display: block;
-        margin: .8rem 0;
     }
     .calc-form__column-2 {
-        flex: 0 0 50%;
-        max-width: 50%;
+        flex: 0 0 100%;
         padding: 0 $grid_gutter;
+        margin-bottom: 1rem;
+
+        @media screen and (min-width: 36.5rem) {
+            flex: 0 0 50%;
+            max-width: 50%;
+            margin-bottom: 0;
+        }
     }
 
     .calc-form__footer__msg {

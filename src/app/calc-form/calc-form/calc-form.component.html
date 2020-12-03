@@ -16,12 +16,12 @@
                         <input type="hidden" formControlName="pricingDataRaw">
                         <input type="file" accept=".csv" (change)="onPricingDataChange($event)">
                         <mat-spinner diameter="20" *ngIf="pricingUploadPendingFlag"></mat-spinner>
-                        <mat-checkbox formControlName="pricingDataSaveFlag">
-                            Save file?
-                        </mat-checkbox>
                     </div>
                     <div class="mat-error" *ngIf="formPricing.errors?.required">You must import valid
                         pricing data source</div>
+                    <mat-checkbox formControlName="pricingDataSaveFlag">
+                        Save file?
+                    </mat-checkbox>
                 </div>
                 <div class="calc-form__column-2" *ngIf="pricingDataFromStorage">
                     <ng-container *ngIf="!usePricingDataFromStorageFlag">
