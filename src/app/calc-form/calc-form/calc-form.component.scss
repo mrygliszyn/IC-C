@@ -49,6 +49,10 @@ $grid_gutter: 1rem;
         }
     }
 
+    .calc-form__upload mat-checkbox {
+        margin-top: .5rem;
+    }
+
     .calc-form__footer__msg {
         display: inline-block;
         font-size: 90%;

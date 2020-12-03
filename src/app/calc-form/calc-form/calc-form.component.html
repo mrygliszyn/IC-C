@@ -10,7 +10,7 @@
         </mat-card-header>
         <mat-card-content>
             <div class="calc-form__row calc-form__row--nested">
-                <div class="calc-form__column-2" *ngIf="!usePricingDataFromStorageFlag">
+                <div class="calc-form__column-2 calc-form__upload" *ngIf="!usePricingDataFromStorageFlag">
                     <h5>Load pricing data from file</h5>
                     <div>
                         <input type="hidden" formControlName="pricingDataRaw">
