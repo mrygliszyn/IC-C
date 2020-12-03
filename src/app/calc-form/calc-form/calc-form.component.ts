@@ -108,6 +108,12 @@ export class CalcFormComponent implements OnInit {
             // Base shipping cost
             const baseShippingCost = this.getShippingCostByLocation(postcode, pricingData);
 
+            // If zone with postcode not found in provided pricing data
+            if (!baseShippingCost) {
+                this._snackBar.open(`Post code ${postcode} was not found in pricing data. Please provide valid post code`)
+                return;
+            }
+
             // Get extra cost if product long checked
             const extraShippingCosts = this.getLongProductExtraCost(longProductFlag);
 
@@ -128,10 +134,14 @@ export class CalcFormComponent implements OnInit {
      * 
      * @return Base shipment cost based on delivery location
      */
-    getShippingCostByLocation(postcode: string, priceTable: PriceTable): number {
+    getShippingCostByLocation(postcode: string, priceTable: PriceTable): number | null {
         const zone = <string>postcode.slice(0, 2);
 
-        return priceTable[zone];
+        const baseCost = priceTable[zone];
+        if (baseCost) {
+            return priceTable[zone];
+        }
+        return null;
     }
 
     /**
